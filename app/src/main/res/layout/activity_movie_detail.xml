@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@color/backgroundColor"
+tools:context="com.example.standard.popularmoviestagetwoseggio.activities.MovieDetailActivity">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <ImageView
+        android:id="@+id/poster_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@mipmap/ic_launcher" />
+
+    <LinearLayout
+        style="@style/Linear_Layout"
+        android:layout_marginTop="30dp">
+
+        <TextView
+            style="@style/DetailTextLeft"
+            android:text="@string/title_text"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/title_tv"
+            style="@style/DetailTextRight"
+            android:hint="@string/title_hint"
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
+    <LinearLayout style="@style/Linear_Layout">
+
+        <TextView
+            style="@style/DetailTextLeft"
+            android:text="@string/story_text" />
+
+        <TextView
+            android:id="@+id/story_tv"
+            style="@style/DetailTextRight"
+            android:hint="@string/story_overview_hint" />
+
+    </LinearLayout>
+
+    <LinearLayout style="@style/Linear_Layout">
+
+        <TextView
+            style="@style/DetailTextLeft"
+            android:text="@string/rating_text" />
+
+        <TextView
+            android:id="@+id/rating_tv"
+            style="@style/DetailTextRight"
+            android:hint="@string/vote_average_hint" />
+
+    </LinearLayout>
+
+    <LinearLayout style="@style/Linear_Layout">
+
+        <TextView
+            style="@style/DetailTextLeft"
+            android:text="@string/date_text" />
+
+        <TextView
+            android:id="@+id/date_tv"
+            style="@style/DetailTextRight"
+            android:hint="@string/released_date_hint" />
+
+    </LinearLayout>
+    <LinearLayout style="@style/Linear_Layout">
+
+        <TextView
+            style="@style/DetailTextLeft"
+            android:text="@string/id_text" />
+
+        <TextView
+            android:id="@+id/id_tv"
+            style="@style/DetailTextRight"
+            android:hint="@string/id_hint" />
+
+    </LinearLayout>
+
+</LinearLayout>
+</ScrollView>

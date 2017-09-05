@@ -1,0 +1,76 @@
+<resources>
+    <string name="app_name">Popular Movies Stage Two</string>
+    <string name="api_key">a495cc93d785e9175db5853bcdb8604a</string>
+
+    <!--Strings inside Movie Activity Class-->
+    <string name="page_appendix"><![CDATA[&page=]]></string>
+    <string name="url_popular">http://api.themoviedb.org/3/movie/popular?api_key=</string>
+    <string name="url_rated">http://api.themoviedb.org/3/movie/top_rated?api_key=</string>
+    <string name="title_popular">Popular Movies</string>
+    <string name="title_rating">Top Rated Movies</string>
+    <string name="dialog_positive_button">Restart</string>
+    <string name="alert_message">
+        There is no Internet Connectivity. Please turn the Internet on and click \'Restart\'.
+    </string>
+    <string name="alert_title">Internet Connectivity</string>
+    <string name="toast_message">
+        No Movies found. Please change your query request.
+    </string>
+
+    <!--Strings inside Movie Adapter Class-->
+    <string name="image_url_w185">http://image.tmdb.org/t/p/w185/</string>
+    <string name="image_url_w342">http://image.tmdb.org/t/p/w342/</string>
+    <string name="image_url_w500">http://image.tmdb.org/t/p/w500/</string>
+
+    <!--Strings inside Movie Adapter Class-->
+    <string name="title_details">Movie Details</string>
+
+    <!--Strings inside Utils Class-->
+    <string name="get_http">GET</string>
+    <string name="error_resp_code">"Error response code: "</string>
+    <string name="utf_8">UTF-8</string>
+    <string name="io_exeption">Problem retrieving the movie JSON results.</string>
+    <string name="io_exeption_http">Problem making the HTTP request.</string>
+    <string name="io_exepion_three">Problem parsing the movie JSON results</string>
+    <string name="results_json">results</string>
+    <string name="utils_title">original_title</string>
+    <string name="utils_poster">poster_path</string>
+    <string name="utils_rating">vote_average</string>
+    <string name="utils_overview">overview</string>
+    <string name="utils_date">release_date</string>
+    <string name="utils_id">id</string>
+    <string name="utils_author">author</string>
+    <string name="utils_content">content</string>
+    <string name="utils_key">key</string>
+
+    <!--Strings inside activity_main.xml-->
+    <string name="load_more_button">Load More</string>
+
+    <!--Strings inside activity_movie_detail.xml-->
+    <string name="title_text">Title:</string>
+    <string name="title_hint">Title</string>
+    <string name="story_text">Story:</string>
+    <string name="story_overview_hint">Story Overview</string>
+    <string name="rating_text">Rating:</string>
+    <string name="vote_average_hint">Vote Average</string>
+    <string name="date_text">Date:</string>
+    <string name="released_date_hint">Released Date</string>
+    <string name="id_text">Id:</string>
+    <string name="id_hint">Movie Id</string>
+
+    <!--Strings inside movie_detail_activity_class-->
+    <string name="detail_url">http://api.themoviedb.org/3/movie/</string>
+    <string name="detail_review_url">/reviews?api_key=</string>
+    <string name="detail_trailer_url">/videos?api_key=</string>
+
+    <!--Strings inside movie_settings.xml-->
+    <string name="most_popular_settings">Most Popular</string>
+    <string name="highest_rated_settings">Highest Rated</string>
+    <string name="favourites_settings">Favourites</string>
+
+    <!--Strings inside detail_list_item.xml-->
+    <string name="author_name_item">Author</string>
+    <string name="review_content_item">Review Content</string>
+    <string name="trailer_item">Trailer</string>
+
+</resources>
