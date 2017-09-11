@@ -1,10 +1,10 @@
-package com.example.standard.popularmoviestagetwoseggio.loaders;
+package com.example.standard.popularmoviestagetwoseggio.dataFromInternet;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 
-import com.example.standard.popularmoviestagetwoseggio.data.Movie;
-import com.example.standard.popularmoviestagetwoseggio.utils.MovieUtils;
+import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.Movie;
+import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.MovieUtils;
 
 import java.util.List;
 

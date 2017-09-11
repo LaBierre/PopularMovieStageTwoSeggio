@@ -1,4 +1,4 @@
-package com.example.standard.popularmoviestagetwoseggio.data;
+package com.example.standard.popularmoviestagetwoseggio.dataFromInternet;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,22 +8,22 @@ import android.os.Parcelable;
  */
 
 public class Movie implements Parcelable {
-    private String mPoster, mTitle, mOverview, mDate, mRating, mId, mAuthor, mContent, mKey, mTrailer;
+    private String mPoster, mTitle, mStory, mDate, mRating, mId, mAuthor, mReview, mKey, mTrailer;
 
     public Movie(String mPoster) {
         this.mPoster = mPoster;
     }
 
-    public Movie(String mPoster, String mTitle, String mOverview, String mDate, String mRating,
-                 String mId, String mAuthor, String mContent, String mKey, String mTrailer) {
+    public Movie(String mPoster, String mTitle, String mStory, String mDate, String mRating,
+                 String mId, String mAuthor, String mReview, String mKey, String mTrailer) {
         this.mPoster = mPoster;
         this.mTitle = mTitle;
-        this.mOverview = mOverview;
+        this.mStory = mStory;
         this.mDate = mDate;
         this.mRating = mRating;
         this.mId = mId;
         this.mAuthor = mAuthor;
-        this.mContent = mContent;
+        this.mReview = mReview;
         this.mKey = mKey;
         this.mTrailer = mTrailer;
     }
@@ -31,12 +31,12 @@ public class Movie implements Parcelable {
     public Movie(Parcel parcel) {
         this.mPoster = parcel.readString();
         this.mTitle = parcel.readString();
-        this.mOverview = parcel.readString();
+        this.mStory = parcel.readString();
         this.mDate = parcel.readString();
         this.mRating = parcel.readString();
         this.mId = parcel.readString();
         this.mAuthor = parcel.readString();
-        this.mContent = parcel.readString();
+        this.mReview = parcel.readString();
         this.mKey = parcel.readString();
         this.mTrailer = parcel.readString();
     }
@@ -53,8 +53,8 @@ public class Movie implements Parcelable {
         return mTitle;
     }
 
-    public String getmOverview() {
-        return mOverview;
+    public String getmStory() {
+        return mStory;
     }
 
     public String getmDate() {
@@ -73,8 +73,8 @@ public class Movie implements Parcelable {
         return mAuthor;
     }
 
-    public String getmContent() {
-        return mContent;
+    public String getmReview() {
+        return mReview;
     }
 
     public String getmKey() {
@@ -98,12 +98,12 @@ public class Movie implements Parcelable {
         */
         parcel.writeString(mPoster);
         parcel.writeString(mTitle);
-        parcel.writeString(mOverview);
+        parcel.writeString(mStory);
         parcel.writeString(mDate);
         parcel.writeString(mRating);
         parcel.writeString(mId);
         parcel.writeString(mAuthor);
-        parcel.writeString(mContent);
+        parcel.writeString(mReview);
         parcel.writeString(mKey);
         parcel.writeString(mTrailer);
     }

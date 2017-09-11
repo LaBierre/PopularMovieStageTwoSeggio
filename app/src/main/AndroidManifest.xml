@@ -28,6 +28,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MovieActivity"/>
         </activity>
+
+        <provider
+            android:authorities="com.example.standard.popularmoviestagetwoseggio"
+            android:name=".dataFromDatabase.MovieProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

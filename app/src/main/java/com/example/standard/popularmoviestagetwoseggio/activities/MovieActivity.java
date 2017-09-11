@@ -1,9 +1,11 @@
 package com.example.standard.popularmoviestagetwoseggio.activities;
 
 import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
@@ -19,15 +21,20 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.standard.popularmoviestagetwoseggio.R;
-import com.example.standard.popularmoviestagetwoseggio.adapters.MovieAdapter;
-import com.example.standard.popularmoviestagetwoseggio.data.Movie;
-import com.example.standard.popularmoviestagetwoseggio.loaders.MovieLoader;
+import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.MovieAdapter;
+import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.MovieCursorAdapter;
+import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.Movie;
+import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.MovieLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<List<Movie>>, MovieAdapter.MovieAdapterOnClickHandler {
+import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.MovieContract.MovieEntry;
+
+public class MovieActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler{
+
+    private static final int  LOADER_ID_MOVIE = 0;
+    private static final int  LOADER_ID_CURSOR = 1;
 
     private int page;
     private ProgressBar progressBar;
@@ -38,6 +45,77 @@ public class MovieActivity extends AppCompatActivity implements
     private String pageString;
     private String apiKey;
     private boolean mDetailedLayout;
+
+    private MovieCursorAdapter mCursorAdapter;
+
+    private LoaderManager.LoaderCallbacks<List<Movie>> movieLoader = new LoaderManager.LoaderCallbacks<List<Movie>>() {
+        @Override
+        public Loader<List<Movie>> onCreateLoader(int i, Bundle bundle) {
+            mDetailedLayout = false;
+            return new MovieLoader(getApplicationContext(), mUrl);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
+            progressBar.setVisibility(View.GONE);
+
+        /*
+        * This if request checks if the home button in the detail activity is clicked and avoids
+        * that the lastly loaded page with movies will be added again in the list
+        */
+            if (!mDetailedLayout){
+                if (movies != null && !movies.isEmpty()) {
+                    mAdapter.add(movies);
+                    mAdapter.notifyDataSetChanged();
+                    Log.d("Test", "onLoadFinished MovieActivity");
+
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    Toast.makeText(getApplicationContext(), getString(R.string.toast_message), Toast.LENGTH_LONG).show();
+                }
+            }
+            mDetailedLayout = true;
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<Movie>> loader) {
+            mAdapter.clear();
+            Log.d("Test", "onLoadReset MovieActivity");
+        }
+    };
+
+    private LoaderManager.LoaderCallbacks<Cursor> cursorLoader = new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override
+        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+
+            String[] projection = {
+                    MovieEntry._ID,
+                    MovieEntry.COLUMN_MOVIE_POSTER,
+                    MovieEntry.COLUMN_MOVIE_TITLE,
+                    MovieEntry.COLUMN_MOVIE_STORY,
+                    MovieEntry.COLUMN_MOVIE_DATE,
+                    MovieEntry.COLUMN_MOVIE_RATING,
+                    MovieEntry.COLUMN_MOVIE_ID,
+                    MovieEntry.COLUMN_MOVIE_AUTHOR,
+                    MovieEntry.COLUMN_MOVIE_REVIEW,
+                    MovieEntry.COLUMN_MOVIE_KEY,
+                    MovieEntry.COLUMN_MOVIE_TRAILER
+
+            };
+            return new CursorLoader(getApplicationContext(), MovieEntry.CONTENT_URI, projection, null, null, null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            // Update {@InventoryAdapter} with this new cursor containing updated product data
+            mCursorAdapter.swapCursor(data);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            mCursorAdapter.swapCursor(null);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +157,7 @@ public class MovieActivity extends AppCompatActivity implements
         recyclerView.setAdapter(mAdapter);
 
         LoaderManager loader = getLoaderManager();
-        loader.initLoader(0, null, this);
+        loader.initLoader(LOADER_ID_MOVIE, null, movieLoader);
     }
 
     /*
@@ -118,7 +196,7 @@ public class MovieActivity extends AppCompatActivity implements
         page++;
         mUrl = mUrl + pageString + page;
         LoaderManager loader = getLoaderManager();
-        loader.restartLoader(0, null, this);
+        loader.restartLoader(LOADER_ID_MOVIE, null, movieLoader);
     }
 
     @Override
@@ -140,7 +218,7 @@ public class MovieActivity extends AppCompatActivity implements
                 mAdapter.clear();
                 page = 1;
                 LoaderManager loaderPopular = getLoaderManager();
-                loaderPopular.restartLoader(0, null, this);
+                loaderPopular.restartLoader(LOADER_ID_MOVIE, null, movieLoader);
                 return true;
             case R.id.rated:
                 checkConnection();
@@ -151,47 +229,17 @@ public class MovieActivity extends AppCompatActivity implements
                 mAdapter.clear();
                 page = 1;
                 LoaderManager loaderRated = getLoaderManager();
-                loaderRated.restartLoader(0, null, this);
+                loaderRated.restartLoader(LOADER_ID_MOVIE, null, movieLoader);
                 return true;
             case R.id.favourites:
                 //Todo: Make a link to the database
                 Toast.makeText(this, "Favourites clicked", Toast.LENGTH_SHORT).show();
+                mCursorAdapter = new MovieCursorAdapter(this, null, null);
+                recyclerView.setAdapter(mCursorAdapter);
+                getLoaderManager().initLoader(LOADER_ID_CURSOR, null, cursorLoader);
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public Loader<List<Movie>> onCreateLoader(int i, Bundle bundle) {
-        mDetailedLayout = false;
-        return new MovieLoader(getApplicationContext(), mUrl);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
-
-        progressBar.setVisibility(View.GONE);
-
-        /*
-        * This if request checks if the home button in the detail activity is clicked and avoids
-        * that the lastly loaded page with movies will be added again in the list
-        */
-        if (!mDetailedLayout){
-            if (movies != null && !movies.isEmpty()) {
-                mAdapter.add(movies);
-                mAdapter.notifyDataSetChanged();
-
-            } else {
-                recyclerView.setVisibility(View.GONE);
-                Toast.makeText(this, getString(R.string.toast_message), Toast.LENGTH_LONG).show();
-            }
-        }
-        mDetailedLayout = true;
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Movie>> loader) {
-        mAdapter.clear();
     }
 
     /*

@@ -17,6 +17,14 @@
         No Movies found. Please change your query request.
     </string>
 
+    <!--Strings for exeptions-->
+    <string name="exception_one">Cannot query unknown URI</string>
+    <string name="exception_two">Unknown URI</string>
+    <string name="exception_three">with match</string>
+    <string name="exception_four">Insertion is not supported for</string>
+    <string name="exception_nine">Failed to insert row for</string>
+    <string name="exception_ten">Deletion is not supported for</string>
+
     <!--Strings inside Movie Adapter Class-->
     <string name="image_url_w185">http://image.tmdb.org/t/p/w185/</string>
     <string name="image_url_w342">http://image.tmdb.org/t/p/w342/</string>
@@ -62,6 +70,8 @@
     <string name="detail_url">http://api.themoviedb.org/3/movie/</string>
     <string name="detail_review_url">/reviews?api_key=</string>
     <string name="detail_trailer_url">/videos?api_key=</string>
+    <string name="delete_failed_edit_activity">Deleting Product failed</string>
+    <string name="delete_succed_edit_activity">Deleting Product succeed</string>
 
     <!--Strings inside movie_settings.xml-->
     <string name="most_popular_settings">Most Popular</string>

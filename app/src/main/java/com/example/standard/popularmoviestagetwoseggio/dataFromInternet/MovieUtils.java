@@ -1,11 +1,10 @@
-package com.example.standard.popularmoviestagetwoseggio.utils;
+package com.example.standard.popularmoviestagetwoseggio.dataFromInternet;
 
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.standard.popularmoviestagetwoseggio.R;
-import com.example.standard.popularmoviestagetwoseggio.data.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;
