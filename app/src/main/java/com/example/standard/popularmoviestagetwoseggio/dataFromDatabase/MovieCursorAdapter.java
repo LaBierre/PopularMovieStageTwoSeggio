@@ -31,7 +31,7 @@ public class MovieCursorAdapter extends RecyclerViewCursorAdapter<MovieCursorAda
     private MovieDbHelper mDbHelper;
     //private List<Cursor> movieItems;
 
-    public MovieCursorAdapter(Context context, Cursor cursor, MovieCursorAdapterOnClickHandler mClickHandler) {
+    public MovieCursorAdapter(Context context, MovieCursorAdapterOnClickHandler mClickHandler, Cursor cursor) {
         super(cursor);
         this.mClickHandler = mClickHandler;
         this.context = context;

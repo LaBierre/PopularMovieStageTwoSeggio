@@ -165,6 +165,7 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
         mUrl = getString(R.string.detail_url) + id + getString(R.string.detail_trailer_url) + apiKey;
 
         Log.d("Test", "Url = " + mUrl);
+        Log.d("Test", "Id = " + id);
 
         releaseDate = movie.getmDate();
 
@@ -189,22 +190,12 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
         movieItems = new ArrayList<>();
 
 
+        favouriteBtn.setText("Favourite");
+        mDetailAdapter = new DetailAdapter(this, this, movieItems);
+        recyclerView.setAdapter(mDetailAdapter);
+        LoaderManager loader = getLoaderManager();
+        loader.initLoader(LOADER_ID_MOVIE, null, detailLoader);
 
-        if (TextUtils.isEmpty(_id)){
-            favouriteBtn.setText("Favourite");
-            mDetailAdapter = new DetailAdapter(this, this, movieItems);
-            recyclerView.setAdapter(mDetailAdapter);
-            LoaderManager loader = getLoaderManager();
-            loader.initLoader(LOADER_ID_MOVIE, null, detailLoader);
-        } else {
-            mCurrentMovieUri = Uri.withAppendedPath(MovieEntry.CONTENT_URI, "/" + _id);
-            Log.d("Test", "mCurrentMovieUri onCreate = " + mCurrentMovieUri);
-            favouriteBtn.setText("Unfavourite");
-            mCursorAdapter = new DetailCursorAdapter(this, this, null);
-            recyclerView.setAdapter(mCursorAdapter);
-            LoaderManager loader = getLoaderManager();
-            loader.initLoader(LOADER_ID_MOVIE, null, cursorLoader);
-        }
 
     }
 
@@ -261,13 +252,10 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
 
         //Todo: Make difference between Database and internet mode
 
-        if (TextUtils.isEmpty(_id)){
+
             LoaderManager loaderReviews = getLoaderManager();
             loaderReviews.restartLoader(LOADER_ID_MOVIE, null, detailLoader);
-        } else {
-            LoaderManager loaderReviews = getLoaderManager();
-            loaderReviews.restartLoader(LOADER_ID_MOVIE, null, cursorLoader);
-        }
+
 
 
     }
@@ -283,13 +271,10 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
         mDetailAdapter.clear();
         Log.d("Test", "Url Button Trailer = " + mUrl);
 
-        if (TextUtils.isEmpty(_id)){
+
             LoaderManager loaderReviews = getLoaderManager();
             loaderReviews.restartLoader(LOADER_ID_MOVIE, null, detailLoader);
-        } else {
-            LoaderManager loaderReviews = getLoaderManager();
-            loaderReviews.restartLoader(LOADER_ID_MOVIE, null, cursorLoader);
-        }
+
 
     }
 
@@ -313,7 +298,7 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
     private void deleteData(){
 
        // int rowsDeleted = getContentResolver().delete(mCurrentMovieUri, null, null);
-        // Todo: rausfinden wie man die mCurrentMovieUri kriegt
+        // DONE: rausfinden wie man die mCurrentMovieUri kriegt
 
         if (mCurrentMovieUri == null){
             mCurrentMovieUri = mMovieUri;
@@ -370,19 +355,6 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
             Toast.makeText(this, "Movie saved in Database", Toast.LENGTH_SHORT).show();
         }
 
-        updateData();
-    }
-
-    private void updateData() {
-        updateReview();
-        updateTrailerKey();
-    }
-
-    private void updateTrailerKey() {
-
-    }
-
-    private void updateReview() {
 
     }
 

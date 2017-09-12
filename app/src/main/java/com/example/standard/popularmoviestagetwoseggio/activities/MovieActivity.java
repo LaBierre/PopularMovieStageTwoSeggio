@@ -59,7 +59,7 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
         @Override
         public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
             progressBar.setVisibility(View.GONE);
-
+            recyclerView.setVisibility(View.VISIBLE);
         /*
         * This if request checks if the home button in the detail activity is clicked and avoids
         * that the lastly loaded page with movies will be added again in the list
@@ -96,6 +96,7 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             // Update {@InventoryAdapter} with this new cursor containing updated product data
             mCursorAdapter.swapCursor(data);
+            //mCursorAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -202,7 +203,12 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
                 progressBar.setVisibility(View.VISIBLE);
                 setTitle(getString(R.string.title_popular));
                 mUrl = getString(R.string.url_popular) + apiKey;
-                mAdapter.clear();
+
+                if (mCursorAdapter != null){
+                    mCursorAdapter.swapCursor(null);
+                }else {
+                    mAdapter.clear();
+                }
                 page = 1;
                 LoaderManager loaderPopular = getLoaderManager();
                 loaderPopular.restartLoader(LOADER_ID_MOVIE, null, movieLoader);
@@ -214,13 +220,18 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
                 setTitle(getString(R.string.title_rating));
                 mUrl = getString(R.string.url_rated) + apiKey;
                 mAdapter.clear();
+                if (mCursorAdapter != null){
+                    mCursorAdapter.swapCursor(null);
+                }else {
+                    mAdapter.clear();
+                }
                 page = 1;
                 LoaderManager loaderRated = getLoaderManager();
                 loaderRated.restartLoader(LOADER_ID_MOVIE, null, movieLoader);
                 return true;
             case R.id.favourites:
                 Toast.makeText(this, "Favourites clicked", Toast.LENGTH_SHORT).show();
-                mCursorAdapter = new MovieCursorAdapter(this, null, null);
+                mCursorAdapter = new MovieCursorAdapter(this, this, null);
                 setTitle("Favourites");
                 recyclerView.setAdapter(mCursorAdapter);
                 getLoaderManager().initLoader(LOADER_ID_CURSOR, null, cursorLoader);
