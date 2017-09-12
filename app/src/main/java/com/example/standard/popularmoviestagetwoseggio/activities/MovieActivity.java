@@ -31,7 +31,7 @@ import java.util.List;
 
 import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.MovieContract.MovieEntry;
 
-public class MovieActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler{
+public class MovieActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler, MovieCursorAdapter.MovieCursorAdapterOnClickHandler{
 
     private static final int  LOADER_ID_MOVIE = 0;
     private static final int  LOADER_ID_CURSOR = 1;
@@ -47,6 +47,7 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
     private boolean mDetailedLayout;
 
     private MovieCursorAdapter mCursorAdapter;
+
 
     private LoaderManager.LoaderCallbacks<List<Movie>> movieLoader = new LoaderManager.LoaderCallbacks<List<Movie>>() {
         @Override
@@ -88,21 +89,7 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
 
-            String[] projection = {
-                    MovieEntry._ID,
-                    MovieEntry.COLUMN_MOVIE_POSTER,
-                    MovieEntry.COLUMN_MOVIE_TITLE,
-                    MovieEntry.COLUMN_MOVIE_STORY,
-                    MovieEntry.COLUMN_MOVIE_DATE,
-                    MovieEntry.COLUMN_MOVIE_RATING,
-                    MovieEntry.COLUMN_MOVIE_ID,
-                    MovieEntry.COLUMN_MOVIE_AUTHOR,
-                    MovieEntry.COLUMN_MOVIE_REVIEW,
-                    MovieEntry.COLUMN_MOVIE_KEY,
-                    MovieEntry.COLUMN_MOVIE_TRAILER
-
-            };
-            return new CursorLoader(getApplicationContext(), MovieEntry.CONTENT_URI, projection, null, null, null);
+            return new CursorLoader(getApplicationContext(), MovieEntry.CONTENT_URI, null, null, null, null);
         }
 
         @Override
@@ -232,9 +219,9 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
                 loaderRated.restartLoader(LOADER_ID_MOVIE, null, movieLoader);
                 return true;
             case R.id.favourites:
-                //Todo: Make a link to the database
                 Toast.makeText(this, "Favourites clicked", Toast.LENGTH_SHORT).show();
                 mCursorAdapter = new MovieCursorAdapter(this, null, null);
+                setTitle("Favourites");
                 recyclerView.setAdapter(mCursorAdapter);
                 getLoaderManager().initLoader(LOADER_ID_CURSOR, null, cursorLoader);
         }
@@ -247,6 +234,8 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
     */
     @Override
     public void onClick(Movie data) {
+
+        //Todo: Send the _id with the intent
 
         Intent intent = new Intent(this, MovieDetailActivity.class);
 

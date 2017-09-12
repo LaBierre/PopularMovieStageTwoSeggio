@@ -8,14 +8,28 @@ import android.os.Parcelable;
  */
 
 public class Movie implements Parcelable {
-    private String mPoster, mTitle, mStory, mDate, mRating, mId, mAuthor, mReview, mKey, mTrailer;
+    private String m_Id, mPoster, mTitle, mStory, mDate, mRating, mId, mAuthor, mReview, mKey, mTrailer;
 
     public Movie(String mPoster) {
         this.mPoster = mPoster;
     }
 
-    public Movie(String mPoster, String mTitle, String mStory, String mDate, String mRating,
+    public Movie(String mPoster, String mTitle, String mStory, String mDate, String mRating, String mId, String mAuthor, String mReview, String mKey, String mTrailer) {
+        this.mPoster = mPoster;
+        this.mTitle = mTitle;
+        this.mStory = mStory;
+        this.mDate = mDate;
+        this.mRating = mRating;
+        this.mId = mId;
+        this.mAuthor = mAuthor;
+        this.mReview = mReview;
+        this.mKey = mKey;
+        this.mTrailer = mTrailer;
+    }
+
+    public Movie(String m_Id, String mPoster, String mTitle, String mStory, String mDate, String mRating,
                  String mId, String mAuthor, String mReview, String mKey, String mTrailer) {
+        this.m_Id = m_Id;
         this.mPoster = mPoster;
         this.mTitle = mTitle;
         this.mStory = mStory;
@@ -29,6 +43,7 @@ public class Movie implements Parcelable {
     }
 
     public Movie(Parcel parcel) {
+        this.m_Id = parcel.readString();
         this.mPoster = parcel.readString();
         this.mTitle = parcel.readString();
         this.mStory = parcel.readString();
@@ -43,6 +58,10 @@ public class Movie implements Parcelable {
 
     public Movie (){
 
+    }
+
+    public String getM_Id() {
+        return m_Id;
     }
 
     public String getmPoster() {
@@ -96,6 +115,7 @@ public class Movie implements Parcelable {
         * private String mPoster, mTitle, mOverview, mDate;
           private double mRating;
         */
+        parcel.writeString(m_Id);
         parcel.writeString(mPoster);
         parcel.writeString(mTitle);
         parcel.writeString(mStory);

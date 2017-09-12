@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.example.standard.popularmoviestagetwoseggio.R;
 import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.DetailCursorAdapter;
+import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.MovieContract;
 import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.DetailAdapter;
 import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.Movie;
 import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.MovieLoader;
@@ -39,6 +40,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.MovieContract.MovieEntry;
+
+import static android.os.Build.VERSION_CODES.M;
 
 public class MovieDetailActivity extends AppCompatActivity implements DetailAdapter.DetailAdapterOnclickHandler
 {
@@ -76,6 +79,8 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
     private String apiKey;
     private List<Movie> movieItems;
     private String id;
+
+    private Uri mCurrentMovieUri;
 
     private Movie movie;
 
@@ -273,6 +278,9 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
 
        // int rowsDeleted = getContentResolver().delete(mCurrentMovieUri, null, null);
         // Todo: rausfinden wie man die mCurrentMovieUri kriegt
+
+        mCurrentMovieUri = Uri.withAppendedPath(MovieEntry.CONTENT_URI, "/" + MovieContract.PATH_MOVIE + movie.getM_Id());
+        Log.d("Test", "mCurrentMovieUri deleteData = " + mCurrentMovieUri);
 
 //        if (rowsDeleted == 0) {
 //            // If the new content URI is null, then there was an error with insertion.

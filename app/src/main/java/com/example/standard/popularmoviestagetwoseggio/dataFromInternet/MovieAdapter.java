@@ -90,6 +90,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
 
+            //String _id = "";
             String title = movieItems.get(adapterPosition).getmTitle();
             String posterImage = context.getString(R.string.image_url_w342) + movieItems.get(adapterPosition).getmPoster();
             String overview = movieItems.get(adapterPosition).getmStory();
