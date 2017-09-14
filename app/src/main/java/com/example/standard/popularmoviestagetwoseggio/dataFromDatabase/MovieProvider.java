@@ -9,9 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.standard.popularmoviestagetwoseggio.R;
 import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.MovieContract.MovieEntry;
@@ -47,11 +45,11 @@ public class MovieProvider extends ContentProvider {
         // when a match is found.
 
         /*
-        * Sets the integer value for multiple rows in table "products"
+        * Sets the integer value for multiple rows in table "movies"
         * */
         sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_MOVIE, MOVIES);
         /*
-        * Sets a single row in table "products"
+        * Sets a single row in table "movies"
         */
         sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_MOVIE + "/#", MOVIE_ID);
     }
@@ -80,7 +78,7 @@ public class MovieProvider extends ContentProvider {
             case MOVIES:
                 // For the product code, query the product table directly with the given
                 // projection, selection, selection arguments, and sort order. The cursor
-                // could contain multiple rows of the products table.
+                // could contain multiple rows of the movies table.
 
                 cursor = database.query(MovieEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
@@ -88,7 +86,7 @@ public class MovieProvider extends ContentProvider {
                 break;
             case MOVIE_ID:
                 // For the PRODUCT_ID code, extract out the ID from the URI.
-                // For an example URI such as "content://com.example.standard.inventoryapp/products/3",
+                // For an example URI such as "content://com.example.standard.inventoryapp/movies/3",
                 // the selection will be "_id=?" and the selection argument will be a
                 // String array containing the actual ID of 3 in this case.
                 // For every "?" in the selection, we need to have an element in the selection
@@ -98,7 +96,7 @@ public class MovieProvider extends ContentProvider {
                 selection = MovieEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
 
-                // This will perform a query on the products table where the _id equals 3 to return a
+                // This will perform a query on the movies table where the _id equals 3 to return a
                 // Cursor containing that row of the table.
                 cursor = database.query(MovieEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
@@ -148,7 +146,6 @@ public class MovieProvider extends ContentProvider {
         // Get writeable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
-        Log.d("Test", "Uri Provider = " + uri);
         // Insert the new movie with the given values
         long id = database.insert(MovieEntry.TABLE_NAME, null, values);
         // If the ID is -1, then the insertion failed. Log an error and return null.
@@ -179,7 +176,7 @@ public class MovieProvider extends ContentProvider {
         switch (match) {
             case MOVIES:
                 // Delete all rows that match the selection and selection args
-                // For  case PRODUCTS:
+                // For  case movies:
                 rowsDeleted = database.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
 
                 return rowsDeleted;

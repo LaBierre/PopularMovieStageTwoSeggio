@@ -17,11 +17,6 @@ import java.util.List;
  */
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
-
-    /*
-     * An on-click handler that I've defined to make it easy for an Activity to interface with
-     * my RecyclerView
-     */
     private final MovieAdapterOnClickHandler mClickHandler;
     private Context context;
     private List<Movie> movieItems;
@@ -90,7 +85,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
 
-            //String _id = "";
             String title = movieItems.get(adapterPosition).getmTitle();
             String posterImage = context.getString(R.string.image_url_w342) + movieItems.get(adapterPosition).getmPoster();
             String overview = movieItems.get(adapterPosition).getmStory();

@@ -2,13 +2,11 @@ package com.example.standard.popularmoviestagetwoseggio.dataFromInternet;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.standard.popularmoviestagetwoseggio.R;
 
@@ -21,8 +19,7 @@ import butterknife.ButterKnife;
  * Created by vince on 03.09.2017.
  */
 
-public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder>
-{
+public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder> {
     /*
      * An on-click handler that I've defined to make it easy for an Activity to interface with
      * my RecyclerView
@@ -51,34 +48,24 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.detail_list_item, parent, false);
-
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position)
-    {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         Movie movieItem = movieItems.get(position);
 
-        //DONE: Fit in author, review, image, trailer
-
         // Check if Review Button is clicket or the Trailer Button
-        if (movieItem.getmAuthor().isEmpty() && movieItem.getmReview().isEmpty()){
-            //Toast.makeText(context, "Trailer Btn is clicked", Toast.LENGTH_SHORT).show();
+        if (movieItem.getmAuthor().isEmpty() && movieItem.getmReview().isEmpty()) {
             holder.trailerLayout.setVisibility(View.VISIBLE);
             holder.reviewLayout.setVisibility(View.GONE);
         } else {
-            //Toast.makeText(context, "Review Btn is clicked", Toast.LENGTH_SHORT).show();
             holder.trailerLayout.setVisibility(View.GONE);
             holder.reviewLayout.setVisibility(View.VISIBLE);
         }
-
         holder.author.setText(movieItem.getmAuthor());
-        Log.d("Test", "Author = " + movieItem.getmAuthor());
         holder.review.setText(movieItem.getmReview());
-        Log.d("Test", "Review = " + movieItem.getmReview());
         holder.trailer.setText(movieItem.getmTrailer());
-        Log.d("Test", "Trailer = " + movieItem.getmTrailer());
     }
 
     @Override
@@ -86,12 +73,11 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder
         return movieItems.size();
     }
 
-    public interface DetailAdapterOnclickHandler{
+    public interface DetailAdapterOnclickHandler {
         void onClick(Movie data);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
-    {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.author_item)
         TextView author;
         @BindView(R.id.review_item)
@@ -116,7 +102,6 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
 
-            //String _id = "";
             String title = movieItems.get(adapterPosition).getmTitle();
             String posterImage = context.getString(R.string.image_url_w342) + movieItems.get(adapterPosition).getmPoster();
             String story = movieItems.get(adapterPosition).getmStory();

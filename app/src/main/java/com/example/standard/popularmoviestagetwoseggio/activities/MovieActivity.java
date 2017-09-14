@@ -1,75 +1,89 @@
 package com.example.standard.popularmoviestagetwoseggio.activities;
 
-import android.app.LoaderManager;
-import android.content.CursorLoader;
+
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.standard.popularmoviestagetwoseggio.R;
-import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.MovieAdapter;
+import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.MovieContract;
 import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.MovieCursorAdapter;
 import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.Movie;
+import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.MovieAdapter;
 import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.MovieLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.MovieContract.MovieEntry;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-public class MovieActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler, MovieCursorAdapter.MovieCursorAdapterOnClickHandler{
+public class MovieActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler, MovieCursorAdapter.MovieCursorAdapterOnClickHandler {
 
-    private static final int  LOADER_ID_MOVIE = 0;
-    private static final int  LOADER_ID_CURSOR = 1;
+    private static final int LOADER_ID_MOVIE = 0;
+    private static final int LOADER_ID_CURSOR = 1;
 
+    private static final String PLACEHOLDER_STATE = "placeholder";
+    private static final String CURSOR_COUNT_STATE = "cursorCount";
+    @BindView(R.id.pb_loading_indicator)
+    ProgressBar progressBar;
+    @BindView(R.id.recyclerview)
+    RecyclerView recyclerView;
+    @BindView(R.id.placeholder)
+    LinearLayout placeholder;
+    @BindView(R.id.load_more_btn)
+    Button loadMoreBtn;
+    int mCursorCount;
     private int page;
-    private ProgressBar progressBar;
-    private RecyclerView recyclerView;
     private MovieAdapter mAdapter;
+    private MovieCursorAdapter mCursorAdapter;
     private List<Movie> movieItems;
     private String mUrl;
     private String pageString;
     private String apiKey;
     private boolean mDetailedLayout;
-
-    private MovieCursorAdapter mCursorAdapter;
-
-
-    private LoaderManager.LoaderCallbacks<List<Movie>> movieLoader = new LoaderManager.LoaderCallbacks<List<Movie>>() {
+    private boolean mFavouritesVisible;
+    private LoaderManager.LoaderCallbacks<List<Movie>> movieLoader = new android.support.v4.app.LoaderManager.LoaderCallbacks<List<Movie>>() {
         @Override
-        public Loader<List<Movie>> onCreateLoader(int i, Bundle bundle) {
+        public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
             mDetailedLayout = false;
             return new MovieLoader(getApplicationContext(), mUrl);
         }
 
         @Override
         public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
+
             progressBar.setVisibility(View.GONE);
+            placeholder.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-        /*
-        * This if request checks if the home button in the detail activity is clicked and avoids
-        * that the lastly loaded page with movies will be added again in the list
-        */
-            if (!mDetailedLayout){
+            loadMoreBtn.setVisibility(View.VISIBLE);
+
+            /*
+            * This if request checks if the home button in the detail activity is clicked and avoids
+            * that the lastly loaded page with movies will be added again in the list
+            */
+            if (!mDetailedLayout) {
                 if (movies != null && !movies.isEmpty()) {
                     mAdapter.add(movies);
                     mAdapter.notifyDataSetChanged();
-                    Log.d("Test", "onLoadFinished MovieActivity");
-
                 } else {
                     recyclerView.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), getString(R.string.toast_message), Toast.LENGTH_LONG).show();
@@ -81,22 +95,35 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
         @Override
         public void onLoaderReset(Loader<List<Movie>> loader) {
             mAdapter.clear();
-            Log.d("Test", "onLoadReset MovieActivity");
         }
     };
 
     private LoaderManager.LoaderCallbacks<Cursor> cursorLoader = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
-        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-
-            return new CursorLoader(getApplicationContext(), MovieEntry.CONTENT_URI, null, null, null, null);
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return new CursorLoader(getApplicationContext(), MovieContract.MovieEntry.CONTENT_URI, null, null, null, null);
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             // Update {@InventoryAdapter} with this new cursor containing updated product data
             mCursorAdapter.swapCursor(data);
-            //mCursorAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+
+            mCursorCount = mCursorAdapter.cursorCount(data);
+
+            if (mCursorCount == 0) {
+                recyclerView.setVisibility(View.GONE);
+                placeholder.setVisibility(View.VISIBLE);
+                mFavouritesVisible = true;
+
+                loadMoreBtn.setVisibility(View.GONE);
+            } else {
+                recyclerView.setVisibility(View.VISIBLE);
+                placeholder.setVisibility(View.GONE);
+                mFavouritesVisible = true;
+                loadMoreBtn.setVisibility(View.VISIBLE);
+            }
         }
 
         @Override
@@ -105,12 +132,13 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
 
-        Log.d("Test", "MovieActivity, onCreate");
+        ButterKnife.bind(this);
 
         /*
         * mDetailedLayout = false means that the home button in MovieDetailActivity is not clicked
@@ -128,29 +156,72 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
         apiKey = getString(R.string.api_key);
         mUrl = getString(R.string.url_popular) + apiKey;
 
-        progressBar = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-
         int numberOfColumns = getResources().getInteger(R.integer.gallery_columns);
-
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, numberOfColumns);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(gridLayoutManager);
 
         movieItems = new ArrayList<>();
 
         mAdapter = new MovieAdapter(this, this, movieItems);
-
         recyclerView.setAdapter(mAdapter);
 
-        LoaderManager loader = getLoaderManager();
-        loader.initLoader(LOADER_ID_MOVIE, null, movieLoader);
+        /*
+        * These lines keep the state of the cursorAdapter when screen rotates-----------------------
+        */
+        if (savedInstanceState != null) {
+            mFavouritesVisible = savedInstanceState.getBoolean(PLACEHOLDER_STATE);
+            mCursorCount = savedInstanceState.getInt(CURSOR_COUNT_STATE);
+        }
+
+        if (!mFavouritesVisible) {
+            LoaderManager loader = getSupportLoaderManager();
+            loader.initLoader(LOADER_ID_MOVIE, null, movieLoader);
+        } else {
+            if (mCursorCount > 0) {
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                mCursorAdapter = new MovieCursorAdapter(this, this, null);
+                recyclerView.setAdapter(mCursorAdapter);
+                getSupportLoaderManager().initLoader(LOADER_ID_CURSOR, null, cursorLoader);
+            } else {
+                recyclerView.setVisibility(View.GONE);
+                placeholder.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+                loadMoreBtn.setVisibility(View.GONE);
+            }
+        }
+        //------------------------------------------------------------------------------------------
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(PLACEHOLDER_STATE, mFavouritesVisible);
+        outState.putInt(CURSOR_COUNT_STATE, mCursorCount);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+//        if (mCursorAdapter != null && mCursorCount > 0) {
+//            getSupportLoaderManager().restartLoader(LOADER_ID_CURSOR, null, cursorLoader);
+//        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (mCursorAdapter != null && mCursorCount > 0) {
+            getSupportLoaderManager().restartLoader(LOADER_ID_CURSOR, null, cursorLoader);
+        }
     }
 
     /*
-    * This method checks the Internet Connectivity and produce an alert if there is no connection
-    */
+        * This method checks the Internet Connectivity and produce an alert if there is no connection
+        */
     public void checkConnection() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
@@ -183,7 +254,7 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
         checkConnection();
         page++;
         mUrl = mUrl + pageString + page;
-        LoaderManager loader = getLoaderManager();
+        LoaderManager loader = getSupportLoaderManager();
         loader.restartLoader(LOADER_ID_MOVIE, null, movieLoader);
     }
 
@@ -199,45 +270,60 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
         switch (item.getItemId()) {
             case R.id.popular:
                 checkConnection();
-                recyclerView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.VISIBLE);
+                popularRatedVisibility();
                 setTitle(getString(R.string.title_popular));
                 mUrl = getString(R.string.url_popular) + apiKey;
 
-                if (mCursorAdapter != null){
-                    mCursorAdapter.swapCursor(null);
-                }else {
+                if (mCursorAdapter != null) {
                     mAdapter.clear();
+                    recyclerView.setAdapter(mAdapter);
+                    getSupportLoaderManager().restartLoader(LOADER_ID_MOVIE, null, movieLoader);
+                } else {
+                    mAdapter.clear();
+                    getSupportLoaderManager().restartLoader(LOADER_ID_MOVIE, null, movieLoader);
                 }
                 page = 1;
-                LoaderManager loaderPopular = getLoaderManager();
-                loaderPopular.restartLoader(LOADER_ID_MOVIE, null, movieLoader);
                 return true;
             case R.id.rated:
                 checkConnection();
-                recyclerView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.VISIBLE);
+                popularRatedVisibility();
                 setTitle(getString(R.string.title_rating));
                 mUrl = getString(R.string.url_rated) + apiKey;
-                mAdapter.clear();
-                if (mCursorAdapter != null){
-                    mCursorAdapter.swapCursor(null);
-                }else {
+
+                if (mCursorAdapter != null) {
                     mAdapter.clear();
+                    recyclerView.setAdapter(mAdapter);
+                    getSupportLoaderManager().restartLoader(LOADER_ID_MOVIE, null, movieLoader);
+                } else {
+                    mAdapter.clear();
+                    getSupportLoaderManager().restartLoader(LOADER_ID_MOVIE, null, movieLoader);
                 }
                 page = 1;
-                LoaderManager loaderRated = getLoaderManager();
-                loaderRated.restartLoader(LOADER_ID_MOVIE, null, movieLoader);
+
                 return true;
             case R.id.favourites:
-                Toast.makeText(this, "Favourites clicked", Toast.LENGTH_SHORT).show();
-                mCursorAdapter = new MovieCursorAdapter(this, this, null);
-                setTitle("Favourites");
-                recyclerView.setAdapter(mCursorAdapter);
-                getLoaderManager().initLoader(LOADER_ID_CURSOR, null, cursorLoader);
+                mFavouritesVisible = true;
+                progressBar.setVisibility(View.VISIBLE);
+                setTitle(getString(R.string.favourites));
+                if (mCursorAdapter != null) {
+                    recyclerView.setAdapter(mCursorAdapter);
+                    getSupportLoaderManager().restartLoader(LOADER_ID_CURSOR, null, cursorLoader);
+                } else {
+                    mCursorAdapter = new MovieCursorAdapter(this, this, null);
+                    recyclerView.setAdapter(mCursorAdapter);
+                    getSupportLoaderManager().initLoader(LOADER_ID_CURSOR, null, cursorLoader);
+                }
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    public void popularRatedVisibility() {
+        recyclerView.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+        placeholder.setVisibility(View.GONE);
+        mFavouritesVisible = false;
+
+        loadMoreBtn.setVisibility(View.VISIBLE);
     }
 
     /*
@@ -245,12 +331,8 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
     */
     @Override
     public void onClick(Movie data) {
-
-        //Todo: Send the _id with the intent
-
         Intent intent = new Intent(this, MovieDetailActivity.class);
-
-        intent.putExtra("data", data);
+        intent.putExtra(getString(R.string.intent_key), data);
         startActivity(intent);
     }
 }

@@ -1,16 +1,15 @@
 package com.example.standard.popularmoviestagetwoseggio.activities;
 
-import android.app.LoaderManager;
 import android.content.ContentValues;
-import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.NavUtils;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,8 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.standard.popularmoviestagetwoseggio.R;
-import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.DetailCursorAdapter;
-import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.MovieContract;
+import com.example.standard.popularmoviestagetwoseggio.SimpleDividerItemDecoration;
+import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.MovieContract.MovieEntry;
 import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.DetailAdapter;
 import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.Movie;
 import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.MovieLoader;
@@ -41,13 +40,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import com.example.standard.popularmoviestagetwoseggio.dataFromDatabase.MovieContract.MovieEntry;
-
-import static android.os.Build.VERSION_CODES.M;
-
-public class MovieDetailActivity extends AppCompatActivity implements DetailAdapter.DetailAdapterOnclickHandler, DetailCursorAdapter.DetailCursorAdapterOnClickHandler {
-    private static final int  LOADER_ID_MOVIE = 0;
-    private static final int  LOADER_ID_CURSOR = 1;
+public class MovieDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Movie>>, DetailAdapter.DetailAdapterOnclickHandler {
+    private static final int LOADER_ID_MOVIE = 0;
 
     @BindView(R.id.poster_image)
     ImageView poster;
@@ -75,7 +69,6 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
 
     private String releaseDate;
     private DetailAdapter mDetailAdapter;
-    private DetailCursorAdapter mCursorAdapter;
     private String mUrl;
     private String apiKey;
     private List<Movie> movieItems;
@@ -87,65 +80,10 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
 
     private Movie movie;
 
-    private LoaderManager.LoaderCallbacks<List<Movie>> detailLoader = new LoaderManager.LoaderCallbacks<List<Movie>>() {
-        @Override
-        public Loader<List<Movie>> onCreateLoader(int i, Bundle bundle) {
-            recyclerView.setVisibility(View.VISIBLE);
-            return new MovieLoader(getApplicationContext(), mUrl);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
-            Log.d("Test", "Loader Id = " + loader.getId());
-
-            progressBar.setVisibility(View.GONE);
-            Log.d("Test", "onLoadFinished DetailActivity");
-
-            if (movies != null && !movies.isEmpty()) {
-                mDetailAdapter.add(movies);
-                mDetailAdapter.notifyDataSetChanged();
-                Log.d("Test", "onLoadFinished DetailActivity");
-
-            } else {
-                recyclerView.setVisibility(View.GONE);
-                Toast.makeText(getApplicationContext(), getString(R.string.toast_message), Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<Movie>> loader) {
-            mDetailAdapter.clear();
-            Log.d("Test", "onLoaderReset DetailActivity");
-        }
-    };
-
-    private LoaderManager.LoaderCallbacks<Cursor> cursorLoader = new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override
-        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-            recyclerView.setVisibility(View.VISIBLE);
-            return new CursorLoader(getApplicationContext(), MovieEntry.CONTENT_URI, null, null, null, null);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            // Update {@InventoryAdapter} with this new cursor containing updated product data
-            Log.d("Test", "onLoadFinished DetailActivity vor Cursor");
-            mCursorAdapter.swapCursor(data);
-
-            Log.d("Test", "onLoadFinished DetailActivity nach Cursor");
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-            Log.d("Test", "onLoaderReset CursorAdapter DetailActivity");
-            mCursorAdapter.swapCursor(null);
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.detail_activity_two);
+        setContentView(R.layout.detail_activity);
 
         ButterKnife.bind(this);
 
@@ -156,20 +94,16 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
         /*
         * Receive Data from MovieActivity and set them into Views of detail layout
         */
-        movie = getIntent().getParcelableExtra("data");
+        movie = getIntent().getParcelableExtra(getString(R.string.intent_key));
 
         _id = movie.getM_Id();
-
         id = movie.getmId();
         apiKey = getString(R.string.api_key);
         mUrl = getString(R.string.detail_url) + id + getString(R.string.detail_trailer_url) + apiKey;
 
-        Log.d("Test", "Url = " + mUrl);
-        Log.d("Test", "Id = " + id);
-
         releaseDate = movie.getmDate();
-
-        String date = releaseDate.substring(0,4);
+        // i wanted to show only the year number. Therefore
+        String date = releaseDate.substring(0, 4);
 
         String posterImage = movie.getmPoster();
         Picasso.with(getApplicationContext()).load(posterImage).into(poster);
@@ -178,34 +112,48 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
         dateTextView.setText(date);
         ratingTextView.setText(movie.getmRating());
 
-        float rate = Float.parseFloat(movie.getmRating())/2;
+        /*
+        * rating is for the rating text view. It shows sth like 6.2/10
+        * in voteRate the last 3 signs will be cutted for the ratingbar, because float rate
+        * doesn't accept 6.2/10
+        */
+        String rating = movie.getmRating();
+        String voteRate = rating.substring(0, rating.length() - 3);
+
+        float rate = Float.parseFloat(voteRate) / 2;
         ratingBar.setRating(rate);
 
-        // http://api.themoviedb.org/3/movie/211672/videos?api_key=a495cc93d785e9175db5853bcdb8604a
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        //recyclerView.setHasFixedSize(true);
+
         recyclerView.setLayoutManager(layoutManager);
+
+        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(
+                getApplicationContext()
+        ));
 
         movieItems = new ArrayList<>();
 
-
-        favouriteBtn.setText("Favourite");
+        /*
+        * If the clicked Movie is not a favourite, the _id must be null
+        */
+        if (_id == null) {
+            favouriteBtn.setText(getString(R.string.favourites));
+        } else {
+            favouriteBtn.setText(getString(R.string.delete));
+        }
         mDetailAdapter = new DetailAdapter(this, this, movieItems);
         recyclerView.setAdapter(mDetailAdapter);
-        LoaderManager loader = getLoaderManager();
-        loader.initLoader(LOADER_ID_MOVIE, null, detailLoader);
-
-
+        LoaderManager loader = getSupportLoaderManager();
+        loader.initLoader(LOADER_ID_MOVIE, null, this);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = new Intent(this, MovieActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                progressBar.setVisibility(View.VISIBLE);
+                //mDetailAdapter.notifyDataSetChanged();
+                NavUtils.navigateUpFromSameTask(MovieDetailActivity.this);
                 break;
         }
         return true;
@@ -238,86 +186,59 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
         }
     }
 
-    //DONE: Call Loader by clicking buttons
     @OnClick(R.id.review_btn)
-    public void review (){
-        Toast.makeText(this, "Review clicked!", Toast.LENGTH_LONG).show();
+    public void review() {
         checkConnection();
-        //recyclerView.setVisibility(View.VISIBLE);
+
         progressBar.setVisibility(View.VISIBLE);
         mUrl = getString(R.string.detail_url) + id + getString(R.string.detail_review_url) + apiKey;
 
-        Log.d("Test", "Url Button Review = " + mUrl);
         mDetailAdapter.clear();
 
-        //Todo: Make difference between Database and internet mode
-
-
-            LoaderManager loaderReviews = getLoaderManager();
-            loaderReviews.restartLoader(LOADER_ID_MOVIE, null, detailLoader);
-
-
-
+        getSupportLoaderManager().restartLoader(LOADER_ID_MOVIE, null, this);
     }
 
     @OnClick(R.id.trailer_btn)
-    public void trailer (){
-        Toast.makeText(this, "Trailer clicked!", Toast.LENGTH_LONG).show();
+    public void trailer() {
         checkConnection();
         //recyclerView.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         mUrl = getString(R.string.detail_url) + id + getString(R.string.detail_trailer_url) + apiKey;
-        //Todo: Make difference between Database and internet mode
         mDetailAdapter.clear();
-        Log.d("Test", "Url Button Trailer = " + mUrl);
 
-
-            LoaderManager loaderReviews = getLoaderManager();
-            loaderReviews.restartLoader(LOADER_ID_MOVIE, null, detailLoader);
-
-
+        getSupportLoaderManager().restartLoader(LOADER_ID_MOVIE, null, this);
     }
 
     @OnClick(R.id.favourite_btn)
-    public void favouriteMovie(){
-
-        if (favouriteBtn.getText() == "Favourite"){
-            Toast.makeText(this, "Favourite Button clicked!", Toast.LENGTH_SHORT).show();
-            //Todo: save the movie data in db
-            favouriteBtn.setText("Unfavourite");
+    public void favouriteMovie() {
+        if (favouriteBtn.getText() == getString(R.string.favourites)) {
+            favouriteBtn.setText(getString(R.string.delete));
             insertData();
 
         } else {
-            Toast.makeText(this, "UnFavourite Button clicked!", Toast.LENGTH_SHORT).show();
-            //Todo: delete the movie data from db
             deleteData();
-            favouriteBtn.setText("Favourite");
+            favouriteBtn.setText(getString(R.string.favourites));
         }
     }
 
-    private void deleteData(){
-
-       // int rowsDeleted = getContentResolver().delete(mCurrentMovieUri, null, null);
-        // DONE: rausfinden wie man die mCurrentMovieUri kriegt
-
-        if (mCurrentMovieUri == null){
-            mCurrentMovieUri = mMovieUri;
+    private void deleteData() {
+        if (mCurrentMovieUri == null) {
+            if (_id == null) {
+                mCurrentMovieUri = mMovieUri;
+            } else {
+                mCurrentMovieUri = Uri.withAppendedPath(MovieEntry.CONTENT_URI, _id);
+            }
         }
-
         rowsDeleted = getContentResolver().delete(mCurrentMovieUri, null, null);
-        Log.d("Test", "mCurrentMovieUri deleteData = " + mCurrentMovieUri);
 
         if (rowsDeleted == 0) {
-            // If the new content URI is null, then there was an error with insertion.
             Toast.makeText(this, getString(R.string.delete_failed_edit_activity), Toast.LENGTH_SHORT).show();
         } else {
-            // Otherwise, the insertion was successful and we can display a toast.
             Toast.makeText(this, getString(R.string.delete_succed_edit_activity), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void insertData(){
-
+    private void insertData() {
         ContentValues values = new ContentValues();
 
         String poster = movie.getmPoster();
@@ -326,10 +247,6 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
         String date = movie.getmDate();
         String rating = movie.getmRating();
         String id = movie.getmId();
-        String author = movie.getmAuthor();
-        String review = movie.getmReview();
-        String key = movie.getmKey();
-        String trailer = movie.getmTrailer();
 
         values.put(MovieEntry.COLUMN_MOVIE_POSTER, poster);
         values.put(MovieEntry.COLUMN_MOVIE_TITLE, title);
@@ -337,35 +254,51 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailAdap
         values.put(MovieEntry.COLUMN_MOVIE_DATE, date);
         values.put(MovieEntry.COLUMN_MOVIE_RATING, rating);
         values.put(MovieEntry.COLUMN_MOVIE_ID, id);
-        values.put(MovieEntry.COLUMN_MOVIE_AUTHOR, author);
-        values.put(MovieEntry.COLUMN_MOVIE_REVIEW, review);
-        values.put(MovieEntry.COLUMN_MOVIE_KEY, key);
-        values.put(MovieEntry.COLUMN_MOVIE_TRAILER, trailer);
 
         mMovieUri = getContentResolver().insert(MovieEntry.CONTENT_URI, values);
 
-        //Todo: author, review und key must be updated
-
-        Log.d("Test", "Uri = " + mMovieUri);
-        Log.d("Test", "Values = " + values);
-
-        if (mMovieUri == null){
-            Toast.makeText(this, "Movie not saved in Database", Toast.LENGTH_SHORT).show();
+        if (mMovieUri == null) {
+            Toast.makeText(this, R.string.movie_not_saved, Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Movie saved in Database", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.movie_saved, Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
     @Override
-    public void onClick(Movie data)
-    {
-        //Implicit Intent for calling youtube in a browser
-        Intent intent=new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("https://www.youtube.com/watch?v=" + data.getmKey()));
-        startActivity(intent);
+    public void onClick(Movie data) {
+        /*
+        * If statement checks if the Trailer List is Visible.
+        * The Review List should not be clickable
+        */
+        if (TextUtils.isEmpty(data.getmReview())) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(getString(R.string.youtube_url) + data.getmKey()));
+            startActivity(intent);
+        }
     }
 
+    @Override
+    public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
+        recyclerView.setVisibility(View.VISIBLE);
+        return new MovieLoader(this, mUrl);
+    }
 
+    @Override
+    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
+        progressBar.setVisibility(View.GONE);
+
+        if (movies != null && !movies.isEmpty()) {
+            mDetailAdapter.add(movies);
+            mDetailAdapter.notifyDataSetChanged();
+        } else {
+            recyclerView.setVisibility(View.GONE);
+            Toast.makeText(getApplicationContext(), getString(R.string.toast_message), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Movie>> loader) {
+        mDetailAdapter.notifyDataSetChanged();
+        mDetailAdapter.clear();
+    }
 }

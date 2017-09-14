@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Popular Movies Stage Two</string>
-    <string name="api_key">Your Key/string>
+    <string name="api_key">a495cc93d785e9175db5853bcdb8604a</string>
 
     <!--Strings inside Movie Activity Class-->
     <string name="page_appendix"><![CDATA[&page=]]></string>
@@ -12,10 +12,13 @@
     <string name="alert_message">
         There is no Internet Connectivity. Please turn the Internet on and click \'Restart\'.
     </string>
-    <string name="alert_title">Internet Connectivity</string>
-    <string name="toast_message">
-        No Movies found. Please change your query request.
+    <string name="empty_view">
+        There are no Movies saved in your Favourites.
     </string>
+    <string name="alert_title">Internet Connectivity</string>
+    <string name="toast_message">No Movie Data found.</string>
+    <string name="favourites">Favourites</string>
+    <string name="intent_key">data</string>
 
     <!--Strings for exeptions-->
     <string name="exception_one">Cannot query unknown URI</string>
@@ -54,7 +57,7 @@
     <!--Strings inside activity_main.xml-->
     <string name="load_more_button">Load More</string>
 
-    <!--Strings inside activity_movie_detail.xml-->
+    <!--Strings inside movie_detail.xml-->
     <string name="title_text">Title:</string>
     <string name="title_hint">Title</string>
     <string name="story_text">Story:</string>
@@ -64,14 +67,25 @@
     <string name="date_text">Date:</string>
     <string name="released_date_hint">Released Date</string>
     <string name="id_text">Id:</string>
+    <string name="titel_hint">TITEL</string>
     <string name="id_hint">Movie Id</string>
+    <string name="tools_date">Date</string>
+    <string name="tools_rating">Rating: 5/10</string>
+    <string name="btn_favourite">Favourite</string>
+    <string name="tools_story">Story</string>
+    <string name="btn_trailers">Trailers</string>
+    <string name="btn_reviews">Reviews</string>
 
     <!--Strings inside movie_detail_activity_class-->
     <string name="detail_url">http://api.themoviedb.org/3/movie/</string>
     <string name="detail_review_url">/reviews?api_key=</string>
     <string name="detail_trailer_url">/videos?api_key=</string>
-    <string name="delete_failed_edit_activity">Deleting Product failed</string>
-    <string name="delete_succed_edit_activity">Deleting Product succeed</string>
+    <string name="delete_failed_edit_activity">Deleting Movie failed</string>
+    <string name="delete_succed_edit_activity">Deleting Movie succeed</string>
+    <string name="movie_not_saved">Movie not saved in Database</string>
+    <string name="movie_saved">Movie saved in Database</string>
+    <string name="delete">delete</string>
+    <string name="youtube_url">https://www.youtube.com/watch?v=</string>
 
     <!--Strings inside movie_settings.xml-->
     <string name="most_popular_settings">Most Popular</string>
@@ -82,5 +96,10 @@
     <string name="author_name_item">Author</string>
     <string name="review_content_item">Review Content</string>
     <string name="trailer_item">Trailer</string>
+    <string name="illegal_exception_one">this should only be called when the cursor is valid</string>
+    <string name="illegal_exception_two">couldn\'t move cursor to position</string>
+    <string name="util_trailer_text">Trailer</string>
+
+
 
 </resources>

@@ -181,17 +181,17 @@ public class MovieUtils {
                 String voteRating;
                 if (currentMovie.has(context.getResources().getString(R.string.utils_rating))) {
                     rating = currentMovie.getDouble(context.getResources().getString(R.string.utils_rating));
-                    voteRating = String.valueOf(rating);
+                    voteRating = String.valueOf(rating) + "/10";
                 } else {
                     voteRating = "";
                 }
 
                 // Extract the value for the key "overview"
-                String overview;
+                String story;
                 if (currentMovie.has(context.getResources().getString(R.string.utils_overview))) {
-                    overview = currentMovie.getString(context.getResources().getString(R.string.utils_overview));
+                    story = currentMovie.getString(context.getResources().getString(R.string.utils_overview));
                 } else {
-                    overview = "";
+                    story = "";
                 }
 
                 // Extract the value for the key "release_date"
@@ -227,11 +227,11 @@ public class MovieUtils {
                 }
 
                 // Extract the value for the key "content"
-                String content;
+                String review;
                 if (currentMovie.has(context.getResources().getString(R.string.utils_content))) {
-                    content = currentMovie.getString(context.getResources().getString(R.string.utils_content));
+                    review = currentMovie.getString(context.getResources().getString(R.string.utils_content));
                 } else {
-                    content = "";
+                    review = "";
                 }
 
                 // Extract the value for the key "key" which is needed for showing trailers
@@ -243,10 +243,10 @@ public class MovieUtils {
                 }
 
                 // Generate Trailer Number like "Trailer 1","Trailer 2", etc.
-                String trailer = "Trailer " + (i+1);
+                String trailer = context.getString(R.string.util_trailer_text) + (i+1);
 
-                Movie movie = new Movie(poster, title, overview, date, voteRating, movieId, author,
-                        content, key, trailer);
+                Movie movie = new Movie(poster, title, story, date, voteRating, movieId, author,
+                        review, key, trailer);
                 movies.add(movie);
             }
 

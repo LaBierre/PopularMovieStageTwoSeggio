@@ -5,8 +5,9 @@
     <color name="navigationBarColor">#1f1f1f</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="textColor">#FF0000</color>
+    <color name="textColor">#ffffff</color>
     <color name="backgroundColor">#000000</color>
-    <color name="backgroundButtonColor">#1f1f1f</color>
+    <color name="backgroundButtonColor">#480808</color>
+    <color name="backgroundDetailItem">#480808</color>
     <color name="dark_gray">#1F1F1F</color>
 </resources>

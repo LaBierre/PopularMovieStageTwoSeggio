@@ -1,56 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
-    android:background="@android:color/holo_blue_light">
+    android:background="@color/backgroundDetailItem"
+    android:orientation="vertical"
+    android:padding="8dp">
 
-    <!--Todo: Layout make schöner-->
     <LinearLayout
+        android:id="@+id/review_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:gravity="center"
-        android:id="@+id/review_layout"
-        android:visibility="gone">
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/author_item"
-            android:hint="@string/author_name_item"/>
+            style="@style/DetailTextItem"
+            android:textSize="24sp"
+            tools:text="@string/author_name_item" />
+
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/review_item"
-            android:hint="@string/review_content_item"/>
+            style="@style/DetailTextItem"
+            android:layout_marginTop="8dp"
+            tools:text="@string/review_content_item" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/trailer_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/trailer_layout"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/trailer_symbol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/trailer_symbol"
             app:srcCompat="@android:drawable/ic_media_play" />
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/trailer_item"
-            android:hint="@string/trailer_item"/>
+            style="@style/DetailTextItem"
+            android:textSize="24sp"
+            tools:text="@string/trailer_item" />
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="@android:color/white"/>
 
 </LinearLayout>

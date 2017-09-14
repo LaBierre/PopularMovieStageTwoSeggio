@@ -27,8 +27,7 @@ public class Movie implements Parcelable {
         this.mTrailer = mTrailer;
     }
 
-    public Movie(String m_Id, String mPoster, String mTitle, String mStory, String mDate, String mRating,
-                 String mId, String mAuthor, String mReview, String mKey, String mTrailer) {
+    public Movie(String m_Id, String mPoster, String mTitle, String mStory, String mDate, String mRating, String mId) {
         this.m_Id = m_Id;
         this.mPoster = mPoster;
         this.mTitle = mTitle;
@@ -36,10 +35,6 @@ public class Movie implements Parcelable {
         this.mDate = mDate;
         this.mRating = mRating;
         this.mId = mId;
-        this.mAuthor = mAuthor;
-        this.mReview = mReview;
-        this.mKey = mKey;
-        this.mTrailer = mTrailer;
     }
 
     public Movie(Parcel parcel) {
@@ -56,7 +51,7 @@ public class Movie implements Parcelable {
         this.mTrailer = parcel.readString();
     }
 
-    public Movie (){
+    public Movie() {
 
     }
 
@@ -111,10 +106,6 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        /*
-        * private String mPoster, mTitle, mOverview, mDate;
-          private double mRating;
-        */
         parcel.writeString(m_Id);
         parcel.writeString(mPoster);
         parcel.writeString(mTitle);

@@ -1,10 +1,8 @@
 package com.example.standard.popularmoviestagetwoseggio.dataFromInternet;
 
-import android.content.AsyncTaskLoader;
-import android.content.Context;
 
-import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.Movie;
-import com.example.standard.popularmoviestagetwoseggio.dataFromInternet.MovieUtils;
+import android.content.Context;
+import android.support.v4.content.AsyncTaskLoader;
 
 import java.util.List;
 
@@ -13,7 +11,6 @@ import java.util.List;
  */
 
 public class MovieLoader extends AsyncTaskLoader<List<Movie>> {
-
     private String mUrl;
 
     public MovieLoader(Context context, String mUrl) {
@@ -28,7 +25,6 @@ public class MovieLoader extends AsyncTaskLoader<List<Movie>> {
 
     @Override
     public List<Movie> loadInBackground() {
-
         if (mUrl == null) {
             return null;
         }
