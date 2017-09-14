@@ -19,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -41,16 +40,15 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
     private static final int LOADER_ID_MOVIE = 0;
     private static final int LOADER_ID_CURSOR = 1;
 
-    private static final String PLACEHOLDER_STATE = "placeholder";
+    private static final String FAVOURITES_VISIBILITY_STATE = "placeholder";
     private static final String CURSOR_COUNT_STATE = "cursorCount";
     @BindView(R.id.pb_loading_indicator)
     ProgressBar progressBar;
     @BindView(R.id.recyclerview)
     RecyclerView recyclerView;
-    @BindView(R.id.placeholder)
-    LinearLayout placeholder;
     @BindView(R.id.load_more_btn)
     Button loadMoreBtn;
+
     int mCursorCount;
     private int page;
     private MovieAdapter mAdapter;
@@ -70,11 +68,8 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
 
         @Override
         public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
-
             progressBar.setVisibility(View.GONE);
-            placeholder.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-            loadMoreBtn.setVisibility(View.VISIBLE);
 
             /*
             * This if request checks if the home button in the detail activity is clicked and avoids
@@ -106,24 +101,21 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            // Update {@InventoryAdapter} with this new cursor containing updated product data
-            mCursorAdapter.swapCursor(data);
             progressBar.setVisibility(View.GONE);
+            loadMoreBtn.setVisibility(View.GONE);
 
             mCursorCount = mCursorAdapter.cursorCount(data);
 
             if (mCursorCount == 0) {
                 recyclerView.setVisibility(View.GONE);
-                placeholder.setVisibility(View.VISIBLE);
                 mFavouritesVisible = true;
-
-                loadMoreBtn.setVisibility(View.GONE);
             } else {
                 recyclerView.setVisibility(View.VISIBLE);
-                placeholder.setVisibility(View.GONE);
                 mFavouritesVisible = true;
-                loadMoreBtn.setVisibility(View.VISIBLE);
+                // Update {@InventoryAdapter} with this new cursor containing updated product data
+                mCursorAdapter.swapCursor(data);
             }
+
         }
 
         @Override
@@ -171,7 +163,7 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
         * These lines keep the state of the cursorAdapter when screen rotates-----------------------
         */
         if (savedInstanceState != null) {
-            mFavouritesVisible = savedInstanceState.getBoolean(PLACEHOLDER_STATE);
+            mFavouritesVisible = savedInstanceState.getBoolean(FAVOURITES_VISIBILITY_STATE);
             mCursorCount = savedInstanceState.getInt(CURSOR_COUNT_STATE);
         }
 
@@ -187,7 +179,6 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
                 getSupportLoaderManager().initLoader(LOADER_ID_CURSOR, null, cursorLoader);
             } else {
                 recyclerView.setVisibility(View.GONE);
-                placeholder.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
                 loadMoreBtn.setVisibility(View.GONE);
             }
@@ -198,17 +189,16 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(PLACEHOLDER_STATE, mFavouritesVisible);
+        outState.putBoolean(FAVOURITES_VISIBILITY_STATE, mFavouritesVisible);
         outState.putInt(CURSOR_COUNT_STATE, mCursorCount);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-//        if (mCursorAdapter != null && mCursorCount > 0) {
-//            getSupportLoaderManager().restartLoader(LOADER_ID_CURSOR, null, cursorLoader);
-//        }
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mCursorAdapter != null && mCursorCount > 0) {
+            getSupportLoaderManager().restartLoader(LOADER_ID_CURSOR, null, cursorLoader);
+        }
     }
 
     @Override
@@ -220,8 +210,8 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
     }
 
     /*
-        * This method checks the Internet Connectivity and produce an alert if there is no connection
-        */
+     * This method checks the Internet Connectivity and produce an alert if there is no connection
+    */
     public void checkConnection() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
@@ -254,8 +244,7 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
         checkConnection();
         page++;
         mUrl = mUrl + pageString + page;
-        LoaderManager loader = getSupportLoaderManager();
-        loader.restartLoader(LOADER_ID_MOVIE, null, movieLoader);
+        getSupportLoaderManager().restartLoader(LOADER_ID_MOVIE, null, movieLoader);
     }
 
     @Override
@@ -266,7 +255,6 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.popular:
                 checkConnection();
@@ -308,10 +296,12 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
                 if (mCursorAdapter != null) {
                     recyclerView.setAdapter(mCursorAdapter);
                     getSupportLoaderManager().restartLoader(LOADER_ID_CURSOR, null, cursorLoader);
+                    getSupportLoaderManager().destroyLoader(LOADER_ID_MOVIE);
                 } else {
                     mCursorAdapter = new MovieCursorAdapter(this, this, null);
                     recyclerView.setAdapter(mCursorAdapter);
                     getSupportLoaderManager().initLoader(LOADER_ID_CURSOR, null, cursorLoader);
+                    getSupportLoaderManager().destroyLoader(LOADER_ID_MOVIE);
                 }
         }
         return super.onOptionsItemSelected(item);
@@ -320,10 +310,8 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapter.Mov
     public void popularRatedVisibility() {
         recyclerView.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
-        placeholder.setVisibility(View.GONE);
-        mFavouritesVisible = false;
-
         loadMoreBtn.setVisibility(View.VISIBLE);
+        mFavouritesVisible = false;
     }
 
     /*

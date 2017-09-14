@@ -214,7 +214,6 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
         if (favouriteBtn.getText() == getString(R.string.favourites)) {
             favouriteBtn.setText(getString(R.string.delete));
             insertData();
-
         } else {
             deleteData();
             favouriteBtn.setText(getString(R.string.favourites));
