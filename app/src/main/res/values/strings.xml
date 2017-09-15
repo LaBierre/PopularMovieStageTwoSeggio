@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Popular Movies Stage Two</string>
-    <string name="api_key">THE KEY</string>
+    <string name="api_key">YOUR API KEY</string>
 
     <!--Strings inside Movie Activity Class-->
     <string name="page_appendix"><![CDATA[&page=]]></string>
@@ -99,7 +99,9 @@
     <string name="illegal_exception_one">this should only be called when the cursor is valid</string>
     <string name="illegal_exception_two">couldn\'t move cursor to position</string>
     <string name="util_trailer_text">Trailer</string>
-
+    <string name="illegal_exeption_one">this should only be called when the cursor is valid</string>
+    <string name="illegal_exeptio_two">couldn\'t move cursor to position</string>
+    <string name="illegal_exeption_three">_id</string>
 
 
 </resources>

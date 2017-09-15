@@ -1,12 +1,15 @@
 package com.example.standard.popularmoviestagetwoseggio.dataFromDatabase;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import com.example.standard.popularmoviestagetwoseggio.R;
+
 /**
- * Created by vince on 10.09.2017.
+ * Taken from Internet Source: I forgot to copy the source
  */
 
 public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHolder> extends
@@ -15,12 +18,14 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
     private Cursor mCursor;
     private boolean mDataValid;
     private int mRowIDColumn;
+    private Context context;
 
 
-    public RecyclerViewCursorAdapter(Cursor cursor)
+    public RecyclerViewCursorAdapter(Cursor cursor, Context context)
     {
         setHasStableIds(true);
         swapCursor(cursor);
+        this.context = context;
     }
 
     public abstract VH onCreateViewHolder(ViewGroup parent, int viewType);
@@ -31,10 +36,10 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
     public void onBindViewHolder(VH holder, int position)
     {
         if(!mDataValid){
-            throw new IllegalStateException("this should only be called when the cursor is valid");
+            throw new IllegalStateException(context.getString(R.string.illegal_exeption_one));
         }
         if(!mCursor.moveToPosition(position)){
-            throw new IllegalStateException("couldn't move cursor to position " + position);
+            throw new IllegalStateException(context.getString(R.string.illegal_exeptio_two) + position);
         }
         onBindViewHolder(holder, mCursor);
     }
@@ -88,7 +93,7 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
             if(mDataSetObserver != null){
                 newCursor.registerDataSetObserver(mDataSetObserver);
             }
-            mRowIDColumn = newCursor.getColumnIndexOrThrow("_id");
+            mRowIDColumn = newCursor.getColumnIndexOrThrow(context.getString(R.string.illegal_exeption_three));
             mDataValid = true;
             notifyDataSetChanged();
         }

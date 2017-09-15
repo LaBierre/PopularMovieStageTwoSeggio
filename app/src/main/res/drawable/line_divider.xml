@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-
+<!--Source: https://gist.github.com/polbins/e37206fbc444207c0e92-->
     <size
         android:width="3dp"
         android:height="1dp" />
