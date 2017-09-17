@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Popular Movies Stage Two</string>
     <string name="api_key">a495cc93d785e9175db5853bcdb8604a</string>
@@ -6,18 +7,18 @@
     <string name="page_appendix"><![CDATA[&page=]]></string>
     <string name="url_popular">http://api.themoviedb.org/3/movie/popular?api_key=</string>
     <string name="url_rated">http://api.themoviedb.org/3/movie/top_rated?api_key=</string>
-    <string name="title_popular">Popular Movies</string>
-    <string name="title_rating">Top Rated Movies</string>
-    <string name="dialog_positive_button">Restart</string>
+    <string name="title_popular">Aktuelle Filme</string>
+    <string name="title_rating">Beste Filme</string>
+    <string name="dialog_positive_button">Neu Starten</string>
     <string name="alert_message">
-        There is no Internet Connectivity. Please turn the Internet on and click \'Restart\'.
+        Sie haben keine Internet Verbindung. Bitte gehen Sie online und klicken auf \'Neu Starten\'.
     </string>
     <string name="empty_view">
-        There are no Movies saved in your Favourites.
+        Sie haben keine Filme in ihrer Favoritenliste.
     </string>
-    <string name="alert_title">Internet Connectivity</string>
-    <string name="toast_message">No Movie Data found.</string>
-    <string name="favourites">Favourites</string>
+    <string name="alert_title">Internet Verbindung</string>
+    <string name="toast_message">Keine Filmdaten gefunden.</string>
+    <string name="favourites">Favoriten</string>
     <string name="intent_key">data</string>
 
     <!--Strings for exeptions-->
@@ -66,9 +67,9 @@
     <string name="vote_average_hint">Vote Average</string>
     <string name="date_text">Date:</string>
     <string name="released_date_hint">Released Date</string>
-    <string name="id_text" translatable="false">Id:</string>
+    <string name="id_text">Id:</string>
     <string name="titel_hint">TITEL</string>
-    <string name="id_hint" translatable="false">Movie Id</string>
+    <string name="id_hint">Movie Id</string>
     <string name="tools_date">Date</string>
     <string name="tools_rating">Rating: 5/10</string>
     <string name="btn_favourite">Favourite</string>
@@ -89,8 +90,8 @@
 
     <!--Strings inside movie_settings.xml-->
     <string name="most_popular_settings">Most Popular</string>
-    <string name="highest_rated_settings">Highest Rated</string>
-    <string name="favourites_settings">Favourites</string>
+    <string name="highest_rated_settings">Am Höchsten bewertet</string>
+    <string name="favourites_settings">Favoriten</string>
 
     <!--Strings inside detail_list_item.xml-->
     <string name="author_name_item">Author</string>

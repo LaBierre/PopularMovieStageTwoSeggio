@@ -40,6 +40,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         this.notifyItemRangeInserted(0, movieItems.size() - 1);
     }
 
+    public List<Movie> getMovieItems() {
+        return movieItems;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())

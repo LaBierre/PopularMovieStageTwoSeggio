@@ -13,7 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.MovieActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:configChanges="screenSize|orientation">
+            <!-- The line above maintains the state of the activity -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,7 +24,8 @@
         </activity>
         <activity android:name=".activities.MovieDetailActivity"
             android:parentActivityName=".activities.MovieActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:configChanges="screenSize|orientation">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

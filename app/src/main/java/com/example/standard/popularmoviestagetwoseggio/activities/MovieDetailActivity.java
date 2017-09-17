@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
@@ -94,7 +95,13 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
         /*
         * Receive Data from MovieActivity and set them into Views of detail layout
         */
-        movie = getIntent().getParcelableExtra(getString(R.string.intent_key));
+        Intent intent = getIntent();
+        Parcelable extras = intent.getParcelableExtra(getString(R.string.intent_key));
+        if (extras != null){
+            movie = getIntent().getParcelableExtra(getString(R.string.intent_key));
+        } else{
+            Toast.makeText(this, getString(R.string.toast_message), Toast.LENGTH_LONG).show();
+        }
 
         _id = movie.getM_Id();
         id = movie.getmId();
@@ -272,7 +279,10 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
         if (TextUtils.isEmpty(data.getmReview())) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(getString(R.string.youtube_url) + data.getmKey()));
-            startActivity(intent);
+            // Verify that the intent will resolve to an activity
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            }
         }
     }
 
