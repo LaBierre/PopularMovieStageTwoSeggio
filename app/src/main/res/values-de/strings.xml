@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Popular Movies Stage Two</string>
-    <string name="api_key">a495cc93d785e9175db5853bcdb8604a</string>
+    <string name="api_key">YOUR API KEY</string>
 
     <!--Strings inside Movie Activity Class-->
     <string name="page_appendix"><![CDATA[&page=]]></string>
